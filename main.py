@@ -3,7 +3,6 @@ from other import view_inventory
 from filament import filament_questions
 from prints import prints_questions
 from spool import spool_questions
-# from spool import spool_questions
 
 def menu():
     while True:
