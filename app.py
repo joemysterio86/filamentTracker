@@ -1,4 +1,4 @@
-import os, csv, sqlalchemy
+import os, sqlalchemy
 from sqlalchemy import func
 from models import FilamentRoll, FilamentRollPrints, FilamentSpool, FilamentType
 from flask import Flask, render_template, request, redirect, session
@@ -14,6 +14,7 @@ sqlsession = Session()
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
+app.config['SECRET_KEY'] = os.urandom(24)
 db = SQLAlchemy(app)
 
 
