@@ -1,17 +1,15 @@
+import time
+import sqlalchemy
+from sqlalchemy.orm import session, sessionmaker
 from models import FilamentSpool, db_uri
 from other import spool_inventory_all
-import time
-import sqlalchemy as db
-from sqlalchemy.orm import session, sessionmaker
 
-engine = db.create_engine(db_uri)
-metadata = db.MetaData()
+engine = sqlalchemy.create_engine(db_uri)
 Session = sessionmaker(bind=engine)
 session = Session()
 
 def add_spool(*args):
     entry = FilamentSpool(
-        # name=args[0],
         brand=args[0],
         spool_material=args[1],
         weight=args[2],

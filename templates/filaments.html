@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Filament Tracker - Filament</title>
+{% endblock %}
+
+
+{% block body %}
+<h1>Enter Filament Info</h1>
+<br>
+<br>
+<form method="POST" action="filaments">
+  <fieldset>
+    <legend>New Filament Details:</legend>
+    <table>
+      <tr>
+        <td><label for="name">Enter Filament Name:</label></td>
+        <td><input type="text" name="name" autofocus></td>
+      </tr>
+      <tr>
+        <td><label for="brand">Enter Filament Brand:</label></td>
+        <td><input type="text" name="brand"></td>
+      </tr>
+      <tr>
+        <td><label for="filament_type">Enter Filament Type:</label></td>
+        <td><input type="text" name="filament_type"></td>
+      </tr>
+      <tr>
+        <td><label for="color">Enter Filament Color:</label></td>
+        <td><input type="text" name="color"></td>
+      </tr>
+      <tr>
+        <td><label for="cost">Enter Filament Cost:</label></td>
+        <td><input type="text" name="cost"></td>
+      </tr>
+      <tr>
+        <td><label for="roll_weight">Enter Filament Roll Weight:</label></td>
+        <td><input type="text" name="roll_weight"></td>
+      </tr>
+      <tr>
+        <td><label for="diameter">Enter Filament Diameter:</label></td>
+        <td><input type="text" name="diameter"></td>
+      </tr>
+      <tr>
+        <td><label for="spool_material">Enter Filament Spool Material:</label></td>
+        <td><input type="text" name="spool_material"></td>
+      </tr>
+      <tr>
+        <td><input type="submit" name="new_fila" value="Add New Filament"></td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
+<br>
+<br>
+<br>
+<h1>Filament List</h1>
+<form method="POST" action="filaments">
+  <fieldset>
+  <legend>Filament Inventory Details:</legend>
+  <table>
+      <tr>
+        <th></th>
+        <th></th>
+        <th>Name</th>
+        <th>Brand</th>
+        <th>Type</th>
+        <th>Color</th>
+        <th>Cost</th>
+        <th>Roll Weight</th>
+        <th>Diameter</th>
+        <th>Spool Material</th>
+        <th>Roll Finished?</th>
+      </tr>
+      {% for view in view_all_filament %}
+      <tr>
+        <td>
+          <button type="submit" formmethod="post" formaction="filaments" name="view_prints" value="{{view.roll_id}}">View Prints</button>
+        </td>
+        <td></td>
+        <td>{{view.name}}</td>
+        <td>{{view.brand}}</td>
+        <td>{{view.filament_type}}</td>
+        <td>{{view.color}}</td>
+        <td>{{view.cost}}</td>
+        <td>{{view.roll_weight}}</td>
+        <td>{{view.diameter}}</td>
+        <td>{{view.spool_material}}</td>
+        {% if view.roll_finished == False %}
+        <td>No</td>
+        {% elif view.roll_finished == True %}
+        <td>Yes</td>
+        {% endif %}
+        <td>
+            <input type="checkbox" id="checkboxes" name="delete_checked" value="{{view.roll_id}}">
+            <label for="delete_checked">Delete</label>
+        </td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><input type="submit" name="checkboxes" value="Delete Selected"></td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
+<br>
+<br>
+<br>
+<p><a href="{{ url_for('index') }}">Back Home</a></p>
+{% endblock %}

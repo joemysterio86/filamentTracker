@@ -5,7 +5,6 @@ import sqlalchemy as db
 from sqlalchemy.orm import session, sessionmaker
 
 engine = db.create_engine(db_uri)
-metadata = db.MetaData()
 Session = sessionmaker(bind=engine)
 session = Session()
 

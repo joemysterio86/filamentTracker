@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Filament Tracker - Main</title>
+{% endblock %}
+
+
+{% block body %}
+
+<h1>Filament General Inventory</h1>
+<form method="POST" action="filaments">
+  <fieldset>
+  <legend>Filament Inventory Details:</legend>
+  <table>
+      <tr>
+        <th></th>
+        <th></th>
+        <th>Name</th>
+        <th>Brand</th>
+        <th>Color</th>
+        <th>Length Remaining</th>
+        <th>Roll Finished?</th>
+      </tr>
+      {% for view in view_gen_filament %}
+      <tr>
+        <td>
+          <button type="submit" formmethod="post" formaction="filaments" name="view_prints" value="{{view.roll_id}}">View Prints</button>
+        </td>
+        <td></td>
+        <td>{{view.name}}</td>
+        <td>{{view.brand}}</td>
+        <td>{{view.color}}</td>
+        <td>{{ fil_length_remaining_calc(view.filament_type, view.roll_id, view.brand, view.spool_material) }}</td>
+        {% if view.roll_finished == False %}
+        <td>No</td>
+        {% elif view.roll_finished == True %}
+        <td>Yes</td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </table>
+  </fieldset>
+</form>
+<br>
+<br>
+<br>
+<p><a href="{{ url_for('filaments') }}">View/Add/Delete Filaments</a></p>
+<p><a href="{{ url_for('spools') }}">View/Add/Delete Spools</a></p>
+{% endblock %}

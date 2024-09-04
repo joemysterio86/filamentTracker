@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Filament Tracker - Spool</title>
+{% endblock %}
+
+
+{% block body %}
+<h1>Enter Spool Info</h1>
+<br>
+<br>
+<form method="POST" action="spools">
+  <fieldset>
+    <legend>New Spool Details:</legend>
+    <table>
+      <tr>
+        <td><label for="brand">Enter Spool Brand:</label></td>
+        <td><input type="text" name="brand"></td>
+      </tr>
+      <tr>
+        <td><label for="spool_material">Enter Spool Material:</label></td>
+        <td><input type="text" name="spool_material"></td>
+      </tr>
+      <tr>
+        <td><label for="weight">Enter Spool Weight (grams):</label></td>
+        <td><input type="text" name="weight"></td>
+      </tr>
+      <tr>
+        <td><input type="submit" name="add_spools" value="Add New Spool"></td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
+<br>
+<br>
+<br><h1>Spool List</h1>
+<form method="POST" action="spools">
+  <fieldset>
+  <legend>Print Inventory Details:</legend>
+    <table>
+      <tr>
+        <th>Spool Brand</th>
+        <th>Spool Material</th>
+        <th>Spool Weight</th>
+      </tr>
+      {% for view in view_spools %}
+      <tr>
+        <td>{{view.brand}}</td>
+        <td>{{view.spool_material}}</td>
+        <td>{{view.weight}}</td>
+        <td>
+          <input type="checkbox" id="checkboxes" name="delete_checked" value="{{view.spool_id}}">
+          <label for="delete_checked">Delete</label>
+      </td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td><input type="submit" name="checkboxes" value="Delete Selected"></td>
+  </tr>
+  </table>
+  </fieldset>
+</form>
+<br>
+<br>
+<br>
+<p><a href="{{ url_for('index') }}">Back Home</a></p>
+{% endblock %}
