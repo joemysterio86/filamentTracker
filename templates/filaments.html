@@ -15,39 +15,62 @@
     <table>
       <tr>
         <td><label for="name">Enter Filament Name:</label></td>
-        <td><input type="text" name="name" autofocus></td>
+        <td><input type="text" name="name" value="{{ request.form['name'] }}" autofocus></td>
       </tr>
       <tr>
         <td><label for="brand">Enter Filament Brand:</label></td>
-        <td><input type="text" name="brand"></td>
+        <td><select name="brand">
+          {% for brand in spool_brand_list %}
+          <option value="{{ brand[0] }}">
+            {{ brand[0] }}
+          </option>
+          {% endfor %}
+        </select>
       </tr>
       <tr>
-        <td><label for="filament_type">Enter Filament Type:</label></td>
-        <td><input type="text" name="filament_type"></td>
-      </tr>
-      <tr>
-        <td><label for="color">Enter Filament Color:</label></td>
-        <td><input type="text" name="color"></td>
-      </tr>
-      <tr>
-        <td><label for="cost">Enter Filament Cost:</label></td>
-        <td><input type="text" name="cost"></td>
-      </tr>
-      <tr>
-        <td><label for="roll_weight">Enter Filament Roll Weight:</label></td>
-        <td><input type="text" name="roll_weight"></td>
+        <td><label for="filament_types">Enter Filament Type:</label></td>
+        <td><select name="filament_types">
+          {% for fil in fil_types_list %}
+          <option value="{{ fil[0] }}">
+            {{ fil[0] }}
+          </option>
+          {% endfor %}
+        </select>
       </tr>
       <tr>
         <td><label for="diameter">Enter Filament Diameter:</label></td>
-        <td><input type="text" name="diameter"></td>
+        <td><select name="diameter">
+          <option value="1.75">1.75 MM</option>
+          <option value="2.85">2.85 MM</option>
+          <option value="3">3 MM</option>
+        </select>
       </tr>
       <tr>
         <td><label for="spool_material">Enter Filament Spool Material:</label></td>
-        <td><input type="text" name="spool_material"></td>
+        <td><select name="spool_material">
+          {% for mat in spool_mat_list %}
+          <option value="{{ mat[0] }}">
+            {{ mat[0] }}
+          </option>
+          {% endfor %}
+        </select>
+        </td>
       </tr>
-      <tr>
-        <td><input type="submit" name="new_fila" value="Add New Filament"></td>
-      </tr>
+      <td><label for="color">Enter Filament Color:</label></td>
+      <td><input type="text" name="color" value="{{ request.form['color'] }}"></td>
+    </tr>
+    <tr>
+      <td><label for="cost">Enter Filament Cost:</label></td>
+      <td><input type="text" name="cost" value="{{ request.form['cost'] }}"></td>
+    </tr>
+    <tr>
+      <td><label for="roll_weight">Enter Filament Roll Weight:</label></td>
+      <td><input type="text" name="roll_weight" value="{{ request.form['roll_weight'] }}"></td>
+    </tr>
+    <tr>
+      <td><input type="submit" name="new_fila" value="Add New Filament"></td>
+    </tr>
+    <tr>
     </table>
   </fieldset>
 </form>
@@ -80,7 +103,7 @@
         <td></td>
         <td>{{view.name}}</td>
         <td>{{view.brand}}</td>
-        <td>{{view.filament_type}}</td>
+        <td>{{view.filament_types}}</td>
         <td>{{view.color}}</td>
         <td>{{view.cost}}</td>
         <td>{{view.roll_weight}}</td>

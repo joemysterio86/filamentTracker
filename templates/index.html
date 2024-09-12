@@ -30,7 +30,7 @@
         <td>{{view.name}}</td>
         <td>{{view.brand}}</td>
         <td>{{view.color}}</td>
-        <td>{{ fil_length_remaining_calc(view.filament_type, view.roll_id, view.brand, view.spool_material) }}</td>
+        <td>{{ fil_length_remaining_calc(view.filament_types, view.roll_id, view.brand, view.spool_material) }}</td>
         {% if view.roll_finished == False %}
         <td>No</td>
         {% elif view.roll_finished == True %}

@@ -1,5 +1,5 @@
 import os, sqlalchemy
-from sqlalchemy import func
+from sqlalchemy import func, text, event
 from models import FilamentRoll, FilamentRollPrints, FilamentSpool, FilamentType
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +17,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
 app.config['SECRET_KEY'] = os.urandom(24)
 db = SQLAlchemy(app)
 
+@event.listens_for(engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")
+    cursor.close()
 
 @app.route("/")
 def index():
@@ -24,28 +29,33 @@ def index():
         session['fila_id'] = request.form.get('view_prints')
         return redirect("prints")
 
-    view_gen_filament = sqlsession.query(FilamentRoll.roll_id, FilamentRoll.name, FilamentRoll.brand, FilamentRoll.filament_type, FilamentRoll.color, FilamentRoll.spool_material, FilamentRoll.roll_finished).order_by(FilamentRoll.roll_id).all()
+    view_gen_filament = sqlsession.query(FilamentRoll.roll_id, FilamentRoll.name, FilamentRoll.brand, FilamentRoll.filament_types, FilamentRoll.color, FilamentRoll.spool_material, FilamentRoll.roll_finished).order_by(FilamentRoll.roll_id).all()
     return render_template("index.html", fil_length_remaining_calc=fil_length_remaining_calc, view_gen_filament=view_gen_filament)
 
 @app.route("/filaments", methods=["GET","POST"])
 def filaments():
+    view_all_filament = sqlsession.query(FilamentRoll.roll_id, FilamentRoll.name, FilamentRoll.brand, FilamentRoll.filament_types, FilamentRoll.color, FilamentRoll.cost, FilamentRoll.roll_weight, FilamentRoll.diameter, FilamentRoll.spool_material, FilamentRoll.roll_finished).order_by(FilamentRoll.roll_id).all()
+    spool_mat_list = set(sqlsession.query(FilamentSpool.spool_material).all())
+    spool_brand_list = set(sqlsession.query(FilamentSpool.brand).all())
+    fil_types_list = sqlsession.query(FilamentType.filament_types).all()
+
     if 'new_fila' in request.form and request.method == 'POST':
+        entry = FilamentRoll(
+            name=request.form.get("name"),
+            brand=request.form.get("brand"),
+            filament_types=request.form.get("filament_types"),
+            color=request.form.get("color"),
+            cost=request.form.get("cost"),
+            roll_weight=request.form.get("roll_weight"),
+            diameter=request.form.get("diameter"),
+            spool_material=request.form.get("spool_material")
+        )
         try:
-            entry = FilamentRoll(
-                name=request.form.get("name"),
-                brand=request.form.get("brand"),
-                filament_type=request.form.get("filament_type"),
-                color=request.form.get("color"),
-                cost=request.form.get("cost"),
-                roll_weight=request.form.get("roll_weight"),
-                diameter=request.form.get("diameter"),
-                spool_material=request.form.get("spool_material"),
-                roll_finished=request.form.get("roll_finished"),
-            )
             sqlsession.add(entry)
             sqlsession.commit()
         except:
             sqlsession.rollback()
+            return render_template("filaments.html", view_all_filament=view_all_filament, spool_mat_list=spool_mat_list, spool_brand_list=spool_brand_list, fil_types_list=fil_types_list)
         else:
             return redirect("filaments")
 
@@ -59,8 +69,7 @@ def filaments():
         session['fila_id'] = request.form.get('view_prints')
         return redirect("prints")
 
-    view_all_filament = sqlsession.query(FilamentRoll.roll_id, FilamentRoll.name, FilamentRoll.brand, FilamentRoll.filament_type, FilamentRoll.color, FilamentRoll.cost, FilamentRoll.roll_weight, FilamentRoll.diameter, FilamentRoll.spool_material, FilamentRoll.roll_finished).order_by(FilamentRoll.roll_id).all()
-    return render_template("filaments.html", view_all_filament=view_all_filament)
+    return render_template("filaments.html", view_all_filament=view_all_filament, spool_mat_list=spool_mat_list, spool_brand_list=spool_brand_list, fil_types_list=fil_types_list)
 
 @app.route("/prints", methods=["GET","POST"])
 def prints():
@@ -101,21 +110,27 @@ def spools():
             sqlsession.commit()
         except:
             sqlsession.rollback()
+            print("somethign failed")
         else:
             return redirect("spools")
 
     
     if 'delete_checked' in request.form and request.method == 'POST':
         for entry in request.form.getlist('delete_checked'):
-            sqlsession.query(FilamentSpool).filter(FilamentSpool.spool_id == entry).delete()
+            sqlsession.execute(text(f'DELETE FROM filament_spool WHERE spool_id = {entry}'))
         sqlsession.commit()
         return redirect("spools")
+    # if 'delete_checked' in request.form and request.method == 'POST':
+    #     for entry in request.form.getlist('delete_checked'):
+    #         sqlsession.query(FilamentSpool).filter(FilamentSpool.spool_id == entry).delete()
+    #     sqlsession.commit()
+    #     return redirect("spools")
 
     view_spools = sqlsession.query(FilamentSpool.spool_id, FilamentSpool.brand, FilamentSpool.spool_material, FilamentSpool.weight).order_by(FilamentSpool.spool_id).all()
     return render_template("spools.html", view_spools=view_spools)
 
 def fil_length_remaining_calc(fil_type, id, spool_brand, material):
-    density = sqlsession.query(FilamentType.density).filter(FilamentType.filament_type == fil_type).scalar()
+    density = sqlsession.query(FilamentType.density).filter(FilamentType.filament_types == fil_type).scalar()
     mass = (sqlsession.query(FilamentRoll.roll_weight).filter(FilamentRoll.roll_id == id).scalar()) - (sqlsession.query(FilamentSpool.weight).filter(FilamentSpool.brand == spool_brand).filter(FilamentSpool.spool_material == material).scalar())
     volume = mass / density * 1000
     diameter = sqlsession.query(FilamentRoll.diameter).filter(FilamentRoll.roll_id == id).scalar()
