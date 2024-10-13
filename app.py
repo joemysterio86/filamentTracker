@@ -7,7 +7,7 @@ from flask_pymongo import PyMongo
 from wtforms import Form, BooleanField, StringField, FloatField, validators
 
 app_mongo = Flask(__name__)
-app_mongo.config["MONGO_URI"] = "mongodb://test-mongodb.corp.jagsns.com:32768/filamentdb"
+app_mongo.config['MONGO_URI'] = 'mongodb://test-mongodb.corp.jagsns.com:32768/filamentdb'
 app_mongo.secret_key = os.urandom(24)
 mongo = PyMongo(app_mongo)
 
@@ -56,27 +56,27 @@ def check_create_collections():
             else:
                 print(f'{collection} collection is there! moving on...')
 
-@app_mongo.route("/")
+@app_mongo.route('/')
 def index():
-    view_gen_filament = filament_rolls.find({}, {"_id":1, "name":1, "brand":1, "filament_type":1, "color":1, "spool_material":1, "roll_finished":1})
+    view_gen_filament = filament_rolls.find({}, {'_id':1, 'name':1, 'brand':1, 'filament_type':1, 'color':1, 'spool_material':1, 'roll_finished':1})
 
     if 'view_prints' in request.form and request.method == 'POST':
         session['fila_id'] = request.form.get('view_prints')
-        return redirect("prints")
+        return redirect('prints')
 
-    return render_template("index.html", view_gen_filament=view_gen_filament, fil_length_remaining_calc=fil_length_remaining_calc)
+    return render_template('index.html', view_gen_filament=view_gen_filament, fil_length_remaining_calc=fil_length_remaining_calc)
 
 
-@app_mongo.route("/filaments", methods=["GET","POST"])
+@app_mongo.route('/filaments', methods=['GET','POST'])
 def filaments():
-    view_all_filament = filament_rolls.find({}, {"_id":1, "name":1, "brand":1, "filament_type":1, "color":1, "cost":1, "roll_weight":1, "diameter":1, "spool_material":1, "roll_finished":1})
-    spool_mat_list = filament_spools.distinct("spool_material")
-    fil_types_list = filament_types.distinct("filament_type")
-    spool_brand_list = filament_spools.distinct("brand")
+    view_all_filament = filament_rolls.find({}, {'_id':1, 'name':1, 'brand':1, 'filament_type':1, 'color':1, 'cost':1, 'roll_weight':1, 'diameter':1, 'spool_material':1, 'roll_finished':1})
+    spool_mat_list = filament_spools.distinct('spool_material')
+    fil_types_list = filament_types.distinct('filament_type')
+    spool_brand_list = filament_spools.distinct('brand')
 
     if 'add_filament' in request.form and request.method == 'POST':
         try:
-            spool_mat_list = filament_spools.distinct("spool_material", {"brand": f"{request.form.get('brand')}"})
+            spool_mat_list = filament_spools.distinct('spool_material', {'brand': f'{request.form.get("brand")}'})
             if request.form.get('spool_material') in spool_mat_list:
                 filament_rolls.insert_one(
                     {
@@ -94,23 +94,24 @@ def filaments():
         except Exception:
             pass
         else:
-            # return render_template("filaments.html", filament_spools=filament_spools,spool_brand_list=spool_brand_list,fil_types_list=fil_types_list,spool_mat_list=spool_mat_list, view_all_filament=view_all_filament)
-            return redirect("filaments")
+            # return render_template('filaments.html', filament_spools=filament_spools,spool_brand_list=spool_brand_list,fil_types_list=fil_types_list,spool_mat_list=spool_mat_list, view_all_filament=view_all_filament)
+            return redirect('filaments')
 
     if 'delete_checked' in request.form and request.method == 'POST':
         for entry in request.form.getlist('delete_checked'):
-            filament_rolls.delete_one({"_id":ObjectId(f"{entry}")})
-        return redirect("filaments")
+            filament_rolls.delete_one({'_id':ObjectId(f'{entry}')})
+        return redirect('filaments')
 
     if 'view_prints' in request.form and request.method == 'POST':
         session['fila_id'] = request.form.get('view_prints')
-        return redirect("prints")
+        return redirect('prints')
 
-    return render_template("filaments.html", filament_spools=filament_spools,spool_brand_list=spool_brand_list,fil_types_list=fil_types_list,spool_mat_list=spool_mat_list, view_all_filament=view_all_filament)
+    return render_template('filaments.html', filament_spools=filament_spools,spool_brand_list=spool_brand_list,fil_types_list=fil_types_list,spool_mat_list=spool_mat_list, view_all_filament=view_all_filament)
 
 @app_mongo.route('/prints', methods=['GET','POST'])
 def prints():
     fila_id = str(session.get('fila_id'))
+    fila_name = filament_rolls.find_one({'_id':ObjectId(f'{fila_id}')},{'_id':0,'name':1})
     view_prints = filament_roll_prints.find({'roll_id': fila_id}, {'_id':1, 'print_name':1, 'print_length':1})
 
     if 'add_prints' in request.form and request.method == 'POST':
@@ -133,12 +134,12 @@ def prints():
             filament_roll_prints.delete_one({'_id':ObjectId(f'{entry}')})
         return redirect('prints')
 
-    return render_template('prints.html', view_prints=view_prints)
+    return render_template('prints.html', view_prints=view_prints, fila_name=fila_name)
 
     
-@app_mongo.route("/spools", methods=["GET","POST"])
+@app_mongo.route('/spools', methods=['GET','POST'])
 def spools():
-    view_spools = filament_spools.find({}, {"_id":1, "brand":1, "spool_material":1, "weight":1})
+    view_spools = filament_spools.find({}, {'_id':1, 'brand':1, 'spool_material':1, 'weight':1})
  
     # if 'add_spools' in request.form and request.method == 'POST' and SpoolForm.validate(self=SpoolForm):
     #     brand = SpoolForm.brand
@@ -149,22 +150,22 @@ def spools():
         try:
             filament_spools.insert_one(
                 {
-                    'brand': request.form.get("brand"),
-                    'spool_material': request.form.get("spool_material"),
-                    'weight': float(request.form.get("weight"))
+                    'brand': request.form.get('brand'),
+                    'spool_material': request.form.get('spool_material'),
+                    'weight': float(request.form.get('weight'))
                 }            
             )
         except:
-            return render_template("spools.html", view_spools=view_spools)
+            return render_template('spools.html', view_spools=view_spools)
         else:
-            return redirect("spools")
+            return redirect('spools')
 
     if 'delete_checked' in request.form and request.method == 'POST':
         for entry in request.form.getlist('delete_checked'):
-            filament_spools.delete_one({"_id":ObjectId(f"{entry}")})
-        return redirect("spools")
+            filament_spools.delete_one({'_id':ObjectId(f'{entry}')})
+        return redirect('spools')
 
-    return render_template("spools.html", view_spools=view_spools)
+    return render_template('spools.html', view_spools=view_spools)
 
 def fil_length_remaining_calc(fil_type, id, spool_brand, spool_material):
     roll_weight = filament_rolls.find_one((ObjectId(f'{id}')),{'_id':0,'roll_weight':1}).get('roll_weight')
@@ -182,27 +183,27 @@ def fil_length_remaining_calc(fil_type, id, spool_brand, spool_material):
     try:
         total_roll_prints = [i for i in filament_roll_prints.aggregate([
             {
-                "$match": {
-                    "roll_id": f'{id}'
+                '$match': {
+                    'roll_id': f'{id}'
                 }
             },{
-                "$group": {
-                    "_id": 'null',
-                    "total_length": {
-                        "$sum": "$print_length"
+                '$group': {
+                    '_id': 'null',
+                    'total_length': {
+                        '$sum': '$print_length'
                     }
                 }
             }
         ])]
 
         remaining_length = length - total_roll_prints[0]['total_length']
-        return "%.3f" % remaining_length
+        return '%.3f' % remaining_length
     except:
-        return "%.3f" % length
-    return render_template("spools.html")
+        return '%.3f' % length
+    return render_template('spools.html')
 
 prepop_fil_type_table()
 check_create_collections()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app_mongo.run(host='0.0.0.0', debug=True)
