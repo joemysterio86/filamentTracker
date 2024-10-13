@@ -1,0 +1,20 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["print_name", "print_length", "roll_id"],
+        "properties": {
+            "print_name": {
+                "bsonType": "string",
+                "description": "Must be a string and is required."
+            },
+            "print_length": {
+                "bsonType": [ "double", "int"],
+                "description": "Must be a double or integer and is required."
+            },
+            "roll_id": {
+                "bsonType": "string",
+                "description": "Must be a string and is required."
+            }        }
+    }
+}
+

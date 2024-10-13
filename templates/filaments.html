@@ -21,18 +21,18 @@
         <td><label for="brand">Enter Filament Brand:</label></td>
         <td><select name="brand">
           {% for brand in spool_brand_list %}
-          <option value="{{ brand[0] }}">
-            {{ brand[0] }}
+          <option value="{{ brand }}">
+            {{ brand }}
           </option>
           {% endfor %}
         </select>
       </tr>
       <tr>
-        <td><label for="filament_types">Enter Filament Type:</label></td>
-        <td><select name="filament_types">
+        <td><label for="filament_type">Enter Filament Type:</label></td>
+        <td><select name="filament_type">
           {% for fil in fil_types_list %}
-          <option value="{{ fil[0] }}">
-            {{ fil[0] }}
+          <option value="{{ fil }}">
+            {{ fil }}
           </option>
           {% endfor %}
         </select>
@@ -40,17 +40,17 @@
       <tr>
         <td><label for="diameter">Enter Filament Diameter:</label></td>
         <td><select name="diameter">
-          <option value="1.75">1.75 MM</option>
-          <option value="2.85">2.85 MM</option>
-          <option value="3">3 MM</option>
+          <option value=1.75>1.75 MM</option>
+          <option value=2.85>2.85 MM</option>
+          <option value=3>3 MM</option>
         </select>
       </tr>
       <tr>
         <td><label for="spool_material">Enter Filament Spool Material:</label></td>
         <td><select name="spool_material">
           {% for mat in spool_mat_list %}
-          <option value="{{ mat[0] }}">
-            {{ mat[0] }}
+          <option value="{{ mat }}">
+            {{ mat }}
           </option>
           {% endfor %}
         </select>
@@ -68,7 +68,7 @@
       <td><input type="text" name="roll_weight" value="{{ request.form['roll_weight'] }}"></td>
     </tr>
     <tr>
-      <td><input type="submit" name="new_fila" value="Add New Filament"></td>
+      <td><input type="submit" name="add_filament" value="Add New Filament"></td>
     </tr>
     <tr>
     </table>
@@ -98,12 +98,12 @@
       {% for view in view_all_filament %}
       <tr>
         <td>
-          <button type="submit" formmethod="post" formaction="filaments" name="view_prints" value="{{view.roll_id}}">View Prints</button>
+          <button type="submit" formmethod="post" formaction="filaments" name="view_prints" value="{{view._id}}">View Prints</button>
         </td>
         <td></td>
         <td>{{view.name}}</td>
         <td>{{view.brand}}</td>
-        <td>{{view.filament_types}}</td>
+        <td>{{view.filament_type}}</td>
         <td>{{view.color}}</td>
         <td>{{view.cost}}</td>
         <td>{{view.roll_weight}}</td>
@@ -115,7 +115,7 @@
         <td>Yes</td>
         {% endif %}
         <td>
-            <input type="checkbox" id="checkboxes" name="delete_checked" value="{{view.roll_id}}">
+            <input type="checkbox" id="checkboxes" name="delete_checked" value="{{view._id}}">
             <label for="delete_checked">Delete</label>
         </td>
       </tr>

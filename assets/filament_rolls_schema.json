@@ -1,0 +1,45 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["name", "brand", "filament_type", "color", "cost", "roll_weight", "diameter", "spool_material", "roll_finished"],
+        "properties": {
+            "name": {
+                "bsonType": "string",
+                "description": "Must be a string and is required."
+            },
+            "brand": {
+                "bsonType": "string",
+                "description": "Must be a string and is required."
+            },
+            "filament_type": {
+                "bsonType": "string",
+                "description": "Must be a string and is required."
+            },
+            "color": {
+                "bsonType": "string",
+                "description": "Must be a string and is required."
+            },
+            "cost": {
+                "bsonType": [ "double", "int"],
+                "description": "Must be a double or integer and is required."
+            },
+            "roll_weight": {
+                "bsonType": [ "double", "int"],
+                "description": "Must be a double or integer and is required."
+            },
+            "diameter": {
+                "bsonType": [ "double", "int"],
+                "description": "Must be a double or integer and is required."
+            },
+            "spool_material": {
+                "bsonType": "string",
+                "description": "Must be a string and is required."
+            },
+            "roll_finished": {
+                "bsonType": "bool",
+                "description": "Must be a boolean and is required."
+            }
+        }
+    }
+}
+

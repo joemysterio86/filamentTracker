@@ -1,0 +1,20 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["brand", "spool_material", "weight"],
+        "properties": {
+            "brand": {
+                "bsonType": "string",
+                "description": "Must be a string and is required."
+            },
+            "spool_material": {
+                "bsonType": "string",
+                "description": "Must be a string and is required."
+            },
+            "weight": {
+                "bsonType": [ "double", "int"],
+                "description": "Must be a double or integer and is required."
+            }        }
+    }
+}
+

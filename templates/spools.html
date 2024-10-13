@@ -15,7 +15,7 @@
     <table>
       <tr>
         <td><label for="brand">Enter Spool Brand:</label></td>
-        <td><input type="text" name="brand"></td>
+        <td><input type="text" name="brand" autofocus></td>
       </tr>
       <tr>
         <td><label for="spool_material">Enter Spool Material:</label></td>
@@ -49,7 +49,7 @@
         <td>{{view.spool_material}}</td>
         <td>{{view.weight}}</td>
         <td>
-          <input type="checkbox" id="checkboxes" name="delete_checked" value="{{view.spool_id}}">
+          <input type="checkbox" id="checkboxes" name="delete_checked" value="{{view._id}}">
           <label for="delete_checked">Delete</label>
       </td>
     </tr>

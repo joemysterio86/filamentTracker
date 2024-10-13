@@ -24,13 +24,13 @@
       {% for view in view_gen_filament %}
       <tr>
         <td>
-          <button type="submit" formmethod="post" formaction="filaments" name="view_prints" value="{{view.roll_id}}">View Prints</button>
+          <button type="submit" formmethod="post" formaction="filaments" name="view_prints" value="{{view._id}}">View Prints</button>
         </td>
         <td></td>
         <td>{{view.name}}</td>
         <td>{{view.brand}}</td>
         <td>{{view.color}}</td>
-        <td>{{ fil_length_remaining_calc(view.filament_types, view.roll_id, view.brand, view.spool_material) }}</td>
+        <td>{{ fil_length_remaining_calc(view.filament_type, view._id, view.brand, view.spool_material) }}</td>
         {% if view.roll_finished == False %}
         <td>No</td>
         {% elif view.roll_finished == True %}
