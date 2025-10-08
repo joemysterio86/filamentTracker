@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Filament Tracker - Edit Filament</title>
+{% endblock %}
+
+
+{% block body %}
+<h1>Edit Filament Info - {{ view_filament_info.get('name') }}</h1>
+<br>
+<br>
+<div class="wrapper">
+    <div id="left">
+        <fieldset class="filament_edit">
+            <legend>Current Filament Details:</legend>
+            <table>
+                <tr>
+                    <td><label for="name">Filament Name:</label></td>
+                    <td><input type="text" value="{{ view_filament_info.get('name') }}" disabled></td>
+                </tr>
+                <tr>
+                    <td><label for="brand">Filament Brand:</label></td>
+                    <td><input type="text" value="{{ view_filament_info.get('brand') }}" disabled></td>
+                </tr>
+                <tr>
+                    <td><label for="filament_type">Filament Type:</label></td>
+                    <td><input type="text" value="{{ view_filament_info.get('filament_type') }}" disabled></td>
+                </tr>
+                <tr>
+                    <td><label for="diameter">Filament Diameter:</label></td>
+                    <td><input type="text" value="{{ view_filament_info.get('diameter') }}" disabled></td>
+                </tr>
+                <tr>
+                    <td><label for="spool_material">Filament Spool Material:</label></td>
+                    <td><input type="text" value="{{ view_filament_info.get('spool_material') }}" disabled></td>
+                    </td>
+                </tr>
+                <td><label for="color">Filament Color:</label></td>
+                <td><input type="text" value="{{ view_filament_info.get('color') }}" disabled></td>
+                </tr>
+                <tr>
+                    <td><label for="cost">Filament Cost:</label></td>
+                    <td><input type="text" value="{{ view_filament_info.get('cost') }}" disabled></td>
+                </tr>
+                <tr>
+                    <td><label for="roll_weight">Filament Roll Weight:</label></td>
+                    <td><input type="text" value="{{ view_filament_info.get('roll_weight') }}" disabled></td>
+                </tr>
+                <tr>
+                    <td><label for="roll_finished">Filament Roll Finished:</label></td>
+                    {% if view_filament_info.get('roll_finished') == False %}
+                    <td><input type="text" value="No" disabled></td>
+                    {% elif view_filament_info.get('roll_finished') == True %}
+                    <td><input type="text" value="Yes" disabled></td>
+                    {% endif %}        
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+    <div id="right">
+        <form method="POST" action="edit_filaments">
+            <fieldset class="filament_edit">
+                <legend>New Filament Details:</legend>
+                <table>
+                    <tr>
+                        <td><label for="name">Enter Filament Name:</label></td>
+                        <td><input type="text" name="name" value="{{ view_filament_info.get('name') }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="brand">Enter Filament Brand:</label></td>
+                        <td><select name="brand">
+                                {% for brand in spool_brand_list %}
+                                {% if brand == view_filament_info.get('brand') %}
+                                <option selected>
+                                    {{ view_filament_info.get('brand') }}
+                                </option>
+                                {% else %}
+                                <option value="{{ brand }}">
+                                    {{ brand }}
+                                </option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="filament_type">Enter Filament Type:</label></td>
+                        <td><select name="filament_type">
+                                {% for fil in fil_types_list %}
+                                {% if fil == view_filament_info.get('filament_type') %}
+                                <option selected>
+                                    {{ view_filament_info.get('filament_type') }}
+                                </option>
+                                {% else %}
+                                <option value="{{ fil }}">
+                                    {{ fil }}
+                                </option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="diameter">Enter Filament Diameter (MM):</label></td>
+                        <td><select name="diameter">
+                                {% for diameter in diameter_list %}
+                                {% if diameter == view_filament_info.get('diameter') %}
+                                <option selected>
+                                    {{ view_filament_info.get('diameter') }}
+                                </option>
+                                {% else %}
+                                <option value="{{ diameter }}">
+                                    {{ diameter }}
+                                </option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="spool_material">Enter Filament Spool Material:</label></td>
+                        <td><select name="spool_material">
+                            {% for mat in spool_mat_list %}
+                            {% if mat == view_filament_info.get('spool_material') %}
+                            <option selected>
+                                {{ view_filament_info.get('spool_material') }}
+                            </option>
+                            {% else %}
+                            <option value="{{ mat }}">
+                                {{ mat }}
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="color">Enter Filament Color:</label></td>
+                        <td><input type="text" name="color" value="{{ view_filament_info.get('color') }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="cost">Enter Filament Cost:</label></td>
+                        <td><input type="text" name="cost" value="{{ view_filament_info.get('cost') }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="roll_weight">Enter Filament Roll Weight:</label></td>
+                        <td><input type="text" name="roll_weight" value="{{ view_filament_info.get('roll_weight') }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="roll_finished">Enter Filament Roll Weight:</label></td>
+                        <td><select name="roll_finished">
+                            {% for roll in roll_finish_status %}
+                            {% if roll == view_filament_info.get('roll_finished') %}
+                            <option selected>
+                                {{ view_filament_info.get('roll_finished') }}
+                            </option>
+                            {% else %}
+                            <option value="{{ roll }}">
+                                {{ roll }}
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" name="edit_filament" value="Edit Filament"></td>
+                    </tr>
+                    <tr>
+                </table>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<p><a href="{{ url_for('filaments') }}">Back to Filaments</a></p>
+<p><a href="{{ url_for('index') }}">Back Home</a></p>
+{% endblock %}

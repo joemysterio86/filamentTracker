@@ -85,6 +85,7 @@
       <tr>
         <th></th>
         <th></th>
+        <th></th>
         <th>Name</th>
         <th>Brand</th>
         <th>Type</th>
@@ -99,6 +100,9 @@
       <tr>
         <td>
           <button type="submit" formmethod="post" formaction="filaments" name="view_prints" value="{{view._id}}">View Prints</button>
+        </td>
+        <td>
+          <button type="submit" formmethod="post" formaction="filaments" name="edit_selection" value="{{view._id}}">Edit</button>
         </td>
         <td></td>
         <td>{{view.name}}</td>
@@ -115,12 +119,13 @@
         <td>Yes</td>
         {% endif %}
         <td>
-            <input type="checkbox" id="checkboxes" name="delete_checked" value="{{view._id}}">
-            <label for="delete_checked">Delete</label>
+          <input type="checkbox" id="checkboxes" name="delete_checked" value="{{view._id}}">
+          <label for="delete_checked">Delete</label>
         </td>
       </tr>
       {% endfor %}
       <tr>
+        <td></td>
         <td></td>
         <td></td>
         <td></td>

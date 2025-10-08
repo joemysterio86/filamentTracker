@@ -5,9 +5,12 @@ from flask import Flask, render_template, request, redirect, session
 from collections import OrderedDict
 from flask_pymongo import PyMongo
 from wtforms import Form, BooleanField, StringField, FloatField, validators
+from dotenv import load_dotenv
 
+load_dotenv()
+mongo_uri=os.environ.get('MONGO_DB_URI')
 app_mongo = Flask(__name__)
-app_mongo.config['MONGO_URI'] = 'mongodb://test-mongodb.corp.jagsns.com:32768/filamentdb'
+app_mongo.config['MONGO_URI'] = mongo_uri
 app_mongo.secret_key = os.urandom(24)
 mongo = PyMongo(app_mongo)
 
@@ -97,27 +100,77 @@ def filaments():
             # return render_template('filaments.html', filament_spools=filament_spools,spool_brand_list=spool_brand_list,fil_types_list=fil_types_list,spool_mat_list=spool_mat_list, view_all_filament=view_all_filament)
             return redirect('filaments')
 
+    if 'edit_selection' in request.form and request.method == 'POST':
+        session['edit_fila_id'] = request.form.get('edit_selection')
+        return redirect('edit_filaments')
+
+    if 'view_prints' in request.form and request.method == 'POST':
+        session['print_fila_id'] = request.form.get('view_prints')
+        return redirect('prints')
+
     if 'delete_checked' in request.form and request.method == 'POST':
         for entry in request.form.getlist('delete_checked'):
             filament_rolls.delete_one({'_id':ObjectId(f'{entry}')})
         return redirect('filaments')
 
-    if 'view_prints' in request.form and request.method == 'POST':
-        session['fila_id'] = request.form.get('view_prints')
-        return redirect('prints')
-
     return render_template('filaments.html', filament_spools=filament_spools,spool_brand_list=spool_brand_list,fil_types_list=fil_types_list,spool_mat_list=spool_mat_list, view_all_filament=view_all_filament)
+
+@app_mongo.route('/edit_filaments', methods=['GET','POST'])
+def edit_filaments():
+    fila_id = str(session.get('edit_fila_id'))
+    view_filament_info = filament_rolls.find_one({'_id':ObjectId(f'{fila_id}')},{'_id':1, 'name':1, 'brand':1, 'filament_type':1, 'color':1, 'cost':1, 'roll_weight':1, 'diameter':1, 'spool_material':1, 'roll_finished':1})
+    spool_mat_list = filament_spools.distinct('spool_material')
+    fil_types_list = filament_types.distinct('filament_type')
+    spool_brand_list = filament_spools.distinct('brand')
+    diameter_list = [1.75,2.85,3]
+    roll_finish_status = [True, False]
+
+    if 'edit_filament' in request.form and request.method == 'POST':
+        try:
+            filament_rolls.update_one({'_id':ObjectId(f'{fila_id}')},
+                {'$set': 
+                    {
+                        'name': request.form.get('name'),
+                        'brand': request.form.get('brand'),
+                        'filament_type': request.form.get('filament_type'),
+                        'color': request.form.get('color'),
+                        'cost': float(request.form.get('cost')),
+                        'roll_weight': float(request.form.get('roll_weight')),
+                        'diameter': float(request.form.get('diameter')),
+                        'spool_material': request.form.get('spool_material'),
+                        'roll_finished': request.form.get('roll_finished')
+                    }
+                }
+            )
+        except Exception:
+            pass
+        else:
+            return redirect('edit_filaments')
+
+    if 'delete_checked' in request.form and request.method == 'POST':
+        for entry in request.form.getlist('delete_checked'):
+            filament_rolls.delete_one({'_id':ObjectId(f'{entry}')})
+        return redirect('edit_filaments')
+
+    return render_template(
+        'edit_filaments.html',
+        view_filament_info=view_filament_info,
+        spool_mat_list=spool_mat_list,
+        fil_types_list=fil_types_list,
+        spool_brand_list=spool_brand_list,
+        diameter_list=diameter_list,
+        roll_finish_status=roll_finish_status
+        )
 
 @app_mongo.route('/prints', methods=['GET','POST'])
 def prints():
-    fila_id = str(session.get('fila_id'))
+    fila_id = str(session.get('print_fila_id'))
     fila_name = filament_rolls.find_one({'_id':ObjectId(f'{fila_id}')},{'_id':0,'name':1})
     view_prints = filament_roll_prints.find({'roll_id': fila_id}, {'_id':1, 'print_name':1, 'print_length':1})
 
     if 'add_prints' in request.form and request.method == 'POST':
         try:
-            print(str(fila_id))
-            entry = filament_roll_prints.insert_one(
+            filament_roll_prints.insert_one(
                 {
                     'print_name': request.form.get('print_name'),
                     'print_length': float(request.form.get('print_length')),
